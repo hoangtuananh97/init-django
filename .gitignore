@@ -1,0 +1,13 @@
+*.pyc
+*sqlite3
+env/
+venv/
+.idea/
+__pycache__
+*.pyc
+*.pyo
+../.idea/
+logs/*
+media/*
+.installed.cfg
+.idea/
