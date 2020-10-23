@@ -1,0 +1,26 @@
+version: '3'
+
+services:
+  mysql:
+    image: mysql:5.7
+    container_name: mysql
+    env_file:
+      - ../../.envs/.default/.mysql
+    ports:
+      - '3306:3306'
+  web_phuot:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: web_phuot
+    container_name: web_phuot
+    command: ../run_web
+    volumes:
+      - .:/code/
+    depends_on:
+      - mysql
+    env_file:
+      - ../../.envs/.default/.aws
+      - ../../.envs/.default/.firebase
+    ports:
+    - '8000:80'
