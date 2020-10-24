@@ -10,14 +10,14 @@ ENV PYTHONUNBUFFERED 1
 RUN mkdir /code/
 WORKDIR /code/
 
-RUN apt-get add && apt-get update \
+RUN apk-get add && apk-get update \
   # dependencies for building Python packages
-  && apt-get install -y build-essential \
+  && apk-get install -y build-essential \
   # mysql dependencies
-  && apt-get install -y default-libmysqlclient-dev \
+  && apk-get install -y default-libmysqlclient-dev \
   # cleaning up unused files
-  && apt-get purge -y --auto-remove -o APT::AutoRemove::RecommendsImportant=false \
-  && rm -rf /var/lib/apt/lists/*
+  && apk-get purge -y --auto-remove -o APT::AutoRemove::RecommendsImportant=false \
+  && rm -rf /var/lib/apk/lists/*
 
 # Requirements are installed here to ensure they will be cached.
 COPY ./requirements /requirements
