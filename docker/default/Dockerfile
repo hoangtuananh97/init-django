@@ -37,7 +37,7 @@ RUN apk update \
      lcms2-dev \
      openjpeg-dev \
      tiff-dev \
-     harfbuzz-dev \
+     harfbuzz-dev
 
 # Requirements are installed here to ensure they will be cached.
 COPY ./requirements /requirements
