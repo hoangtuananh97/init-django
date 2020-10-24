@@ -29,7 +29,15 @@ RUN apk update \
      fribidi-dev \
      tcl-dev \
      g++ \
-     curl
+     curl \
+     # Pillow dependencies
+     jpeg-dev \
+     zlib-dev \
+     freetype-dev \
+     lcms2-dev \
+     openjpeg-dev \
+     tiff-dev \
+     harfbuzz-dev \
 
 # Requirements are installed here to ensure they will be cached.
 COPY ./requirements /requirements
