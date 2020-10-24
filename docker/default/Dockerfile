@@ -20,12 +20,7 @@ WORKDIR /code/
 #  && rm -rf /var/lib/apk/lists/*
 
 RUN apk update \
-    && apk add --virtual build-dependencies
-    build-base
-    gcc
-    wget
-    git
-    mysql-client
+    && apk add --no-cache --virtual build-dependencies build-base gcc wget git mysql-client
 
 # Requirements are installed here to ensure they will be cached.
 COPY ./requirements /requirements
