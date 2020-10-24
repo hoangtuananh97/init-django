@@ -19,7 +19,7 @@ WORKDIR /code/
 #  && apk purge -y --auto-remove -o APT::AutoRemove::RecommendsImportant=false \
 #  && rm -rf /var/lib/apk/lists/*
 
-RUN apk update
+RUN apk update \
     && apk add --virtual build-dependencies
     build-base
     gcc
