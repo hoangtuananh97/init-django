@@ -14,7 +14,7 @@ services:
       dockerfile: ./docker/default/Dockerfile
     image: web_phuot
     container_name: web_phuot
-    command: ../run_web
+    command: ./run_web
     volumes:
       - .:/code/
     depends_on:
