@@ -23,7 +23,7 @@ RUN apk update \
     && apk add --no-cache --virtual build-dependencies build-base gcc wget git mysql-client
 
 # Requirements are installed here to ensure they will be cached.
-COPY ../../requirements.txt /requirements.txt
-RUN pip install -r --no-cache-dir /requirements.txt
+COPY ./requirements /requirements
+RUN pip install -r /requirements/requirements.txt
 
 ADD . /code/
