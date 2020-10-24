@@ -36,3 +36,6 @@ COPY ./requirements /requirements
 RUN pip install -r /requirements/requirements.txt
 
 ADD . /code/
+
+EXPOSE 80
+CMD exec uwsgi --http :80 --module web.wsgi
