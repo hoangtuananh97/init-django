@@ -20,8 +20,7 @@ WORKDIR /code/
 #  && rm -rf /var/lib/apk/lists/*
 
 RUN apk update \
-    && apk add --no-cache --virtual build-dependencies build-base gcc wget git \
-    && apk add default-libmysqlclient-dev
+    && apk add --no-cache --virtual build-dependencies build-base gcc wget git mysql-client
 
 # Requirements are installed here to ensure they will be cached.
 COPY ./requirements /requirements
