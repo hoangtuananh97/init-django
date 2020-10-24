@@ -10,13 +10,13 @@ ENV PYTHONUNBUFFERED 1
 RUN mkdir /code/
 WORKDIR /code/
 
-RUN apk add && apk update \
+RUN apk add && apk update
   # dependencies for building Python packages
-  && apk install -y build-essential \
+RUN apk install -y build-essential
   # mysql dependencies
-  && apk install -y default-libmysqlclient-dev \
+RUN apk install -y default-libmysqlclient-dev
   # cleaning up unused files
-  && apk purge -y --auto-remove -o APT::AutoRemove::RecommendsImportant=false \
+RUN apk purge -y --auto-remove -o APT::AutoRemove::RecommendsImportant=false \
   && rm -rf /var/lib/apk/lists/*
 
 # Requirements are installed here to ensure they will be cached.
