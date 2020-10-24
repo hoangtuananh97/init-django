@@ -146,84 +146,84 @@ USE_L10N = True
 
 USE_TZ = True
 
-LOGGING = {
-    'version': 1,
-    'disable_existing_loggers': False,
-    'formatters': {
-        'simple': {
-            'format': '[%(asctime)s] %(levelname)s %(message)s',
-            'datefmt': '%Y-%m-%d %H:%M:%S'
-        },
-        'verbose': {
-            'format': '[%(asctime)s] %(levelname)s [%(name)s.%(funcName)s:%(lineno)d] %(message)s',
-            'datefmt': '%Y-%m-%d %H:%M:%S'
-        },
-    },
-    'handlers': {
-        'debug': {
-            'level': 'DEBUG',
-            'class': 'logging.FileHandler',
-            'filename': os.path.join(os.path.dirname(BASE_DIR), 'init-django/logs') + '/app.log',
-            'formatter': 'verbose',
-        },
-        'error': {
-            'level': 'ERROR',
-            'class': 'logging.FileHandler',
-            'filename': os.path.join(os.path.dirname(BASE_DIR), 'init-django/logs') + '/errors.log',
-            'formatter': 'verbose',
-        },
-        'request': {
-            'level': 'ERROR',
-            'class': 'logging.FileHandler',
-            'filename': os.path.join(os.path.dirname(BASE_DIR), 'init-django/logs') + '/request.log',
-            'formatter': 'verbose',
-        },
-        # 'app_logfile': {
-        #     'level': 'DEBUG',
-        #     'class': 'logging.handlers.RotatingFileHandler',
-        #     'filename': os.path.join(os.path.dirname(BASE_DIR), 'init-django/logs') + '/app.log',
-        #     'maxBytes': 1024 * 1024 * 15,  # 15MB
-        #     'backupCount': 10,
-        #     'formatter': 'verbose',
-        # },
-        # 'app_error_logfile': {
-        #     'level': 'ERROR',
-        #     'class': 'logging.handlers.RotatingFileHandler',
-        #     'filename': os.path.join(os.path.dirname(BASE_DIR), 'init-django/logs') + '/errors.log',
-        #     'maxBytes': 1024 * 1024 * 15,  # 15MB
-        #     'backupCount': 10,
-        #     'formatter': 'verbose',
-        # },
-        # 'app_request_logfile': {
-        #     'level': 'ERROR',
-        #     'class': 'logging.handlers.RotatingFileHandler',
-        #     'filename': os.path.join(os.path.dirname(BASE_DIR), 'init-django/logs') + '/request.log',
-        #     'maxBytes': 1024 * 1024 * 15,  # 15MB
-        #     'backupCount': 10,
-        #     'formatter': 'verbose',
-        # },
-    },
-    'loggers': {
-        'django': {
-            'handlers': ['debug', 'error'],
-            'level': 'DEBUG',
-            'propagate': True,
-        },
-        'django.request': {
-            'handlers': ['request', ],
-            'level': 'ERROR',
-            'propagate': True,
-        },
-        # 'errors': {
-        #     'handlers': ['app_error_logfile', ],
-        #     'level': 'ERROR',
-        # },
-        # 'app': {
-        #     'handlers': ['app_logfile', ],
-        #     'level': 'DEBUG',
-        # },
-    },
-}
+# LOGGING = {
+#     'version': 1,
+#     'disable_existing_loggers': False,
+#     'formatters': {
+#         'simple': {
+#             'format': '[%(asctime)s] %(levelname)s %(message)s',
+#             'datefmt': '%Y-%m-%d %H:%M:%S'
+#         },
+#         'verbose': {
+#             'format': '[%(asctime)s] %(levelname)s [%(name)s.%(funcName)s:%(lineno)d] %(message)s',
+#             'datefmt': '%Y-%m-%d %H:%M:%S'
+#         },
+#     },
+#     'handlers': {
+#         'debug': {
+#             'level': 'DEBUG',
+#             'class': 'logging.FileHandler',
+#             'filename': os.path.join(os.path.dirname(BASE_DIR), 'init-django/logs') + '/app.log',
+#             'formatter': 'verbose',
+#         },
+#         'error': {
+#             'level': 'ERROR',
+#             'class': 'logging.FileHandler',
+#             'filename': os.path.join(os.path.dirname(BASE_DIR), 'init-django/logs') + '/errors.log',
+#             'formatter': 'verbose',
+#         },
+#         'request': {
+#             'level': 'ERROR',
+#             'class': 'logging.FileHandler',
+#             'filename': os.path.join(os.path.dirname(BASE_DIR), 'init-django/logs') + '/request.log',
+#             'formatter': 'verbose',
+#         },
+#         # 'app_logfile': {
+#         #     'level': 'DEBUG',
+#         #     'class': 'logging.handlers.RotatingFileHandler',
+#         #     'filename': os.path.join(os.path.dirname(BASE_DIR), 'init-django/logs') + '/app.log',
+#         #     'maxBytes': 1024 * 1024 * 15,  # 15MB
+#         #     'backupCount': 10,
+#         #     'formatter': 'verbose',
+#         # },
+#         # 'app_error_logfile': {
+#         #     'level': 'ERROR',
+#         #     'class': 'logging.handlers.RotatingFileHandler',
+#         #     'filename': os.path.join(os.path.dirname(BASE_DIR), 'init-django/logs') + '/errors.log',
+#         #     'maxBytes': 1024 * 1024 * 15,  # 15MB
+#         #     'backupCount': 10,
+#         #     'formatter': 'verbose',
+#         # },
+#         # 'app_request_logfile': {
+#         #     'level': 'ERROR',
+#         #     'class': 'logging.handlers.RotatingFileHandler',
+#         #     'filename': os.path.join(os.path.dirname(BASE_DIR), 'init-django/logs') + '/request.log',
+#         #     'maxBytes': 1024 * 1024 * 15,  # 15MB
+#         #     'backupCount': 10,
+#         #     'formatter': 'verbose',
+#         # },
+#     },
+#     'loggers': {
+#         'django': {
+#             'handlers': ['debug', 'error'],
+#             'level': 'DEBUG',
+#             'propagate': True,
+#         },
+#         'django.request': {
+#             'handlers': ['request', ],
+#             'level': 'ERROR',
+#             'propagate': True,
+#         },
+#         # 'errors': {
+#         #     'handlers': ['app_error_logfile', ],
+#         #     'level': 'ERROR',
+#         # },
+#         # 'app': {
+#         #     'handlers': ['app_logfile', ],
+#         #     'level': 'DEBUG',
+#         # },
+#     },
+# }
 
 # auth users model
 AUTH_USER_MODEL = 'users.User'
