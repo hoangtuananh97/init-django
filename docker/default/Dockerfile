@@ -10,7 +10,7 @@ ENV PYTHONUNBUFFERED 1
 RUN mkdir /code/
 WORKDIR /code/
 
-RUN apt-get update \
+RUN apt-get add && apt-get update \
   # dependencies for building Python packages
   && apt-get install -y build-essential \
   # mysql dependencies
