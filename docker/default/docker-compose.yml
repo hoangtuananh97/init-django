@@ -10,8 +10,8 @@ services:
       - '3306:3306'
   web_phuot:
     build:
-      context: .
-      dockerfile: Dockerfile
+      context: ""
+      dockerfile: docker/default/Dockerfile
     image: web_phuot
     container_name: web_phuot
     command: ../run_web
