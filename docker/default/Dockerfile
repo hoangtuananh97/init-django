@@ -20,7 +20,16 @@ WORKDIR /code/
 #  && rm -rf /var/lib/apk/lists/*
 
 RUN apk update \
-    && apk add --no-cache --virtual build-dependencies build-base gcc wget git
+    && apk add --no-cache --virtual build-dependencies build-base \
+     gcc \
+     wget \
+     git \
+     python3-dev \
+     mariadb-dev \
+     fribidi-dev \
+     tcl-dev \
+     g++ \
+     curl
 
 # Requirements are installed here to ensure they will be cached.
 COPY ./requirements /requirements
