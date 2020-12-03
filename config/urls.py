@@ -13,25 +13,27 @@ Including another URLconf
     1. Import the include() function: from django.urls import include, path
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
+from django.conf import settings
 from django.conf.urls import url
 from django.conf.urls.static import static
 from django.contrib import admin
 from django.urls import path, include
 from rest_framework_simplejwt.views import TokenObtainPairView
 
-from config import settings
-from users.api.views import UserActivationView, Logout, SendEmailRestPassword
+from app.users.api.views import UserActivationView, Logout, SendEmailRestPassword
+from config import views
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('api/v1/', include('web.urls')),
-    path('api/v1/', include('users.api.urls')),
+    path('api/v1/', include('app.web.urls')),
+    path('api/v1/', include('app.users.api.urls')),
     path('api/v1/auth/signin', TokenObtainPairView.as_view(), name='signin'),
     url(r'^auth/', include('djoser.urls')),
     url(r'^auth/users/activate/(?P<uid>[\w-]+)/(?P<token>[\w-]+)$', UserActivationView.as_view()),
     url(r'^auth/users/reset_password$', SendEmailRestPassword.as_view()),
     url(r'^auth/users/reset_password_confirm$', SendEmailRestPassword.as_view()),
     url(r'^auth/users/logout$', Logout.as_view()),
+    path('healthy/', views.healthy, name='healthy'),
 
 ]
 if settings.DEBUG:

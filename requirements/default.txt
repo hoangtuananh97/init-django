@@ -1,0 +1,39 @@
+certifi==2019.9.11
+chardet==3.0.4
+djoser==2.0.3
+idna==2.8
+Markdown==3.1.1
+Pillow==6.2.0
+PyJWT==1.7.1
+pyotp==2.3.0
+PySocks==1.7.1
+python-dateutil==2.8.1
+pytz==2019.3
+requests==2.22.0
+six==1.12.0
+sqlparse==0.3.0
+text-unidecode==1.3
+urllib3==1.25.6
+qrcode
+boto3
+
+# password
+# ------------------------------------------------------------------------------
+django-bcrypt
+# firebase
+# ------------------------------------------------------------------------------
+firebase-admin
+# sql
+# ------------------------------------------------------------------------------
+psycopg2
+
+# Django
+# ------------------------------------------------------------------------------
+django-cors-headers==3.5.0
+django-environ==0.4.5
+Django==2.2.6
+django-filter==2.2.0
+django-templated-mail==1.1.1
+django-widget-tweaks==1.4.8
+djangorestframework==3.10.3
+djangorestframework-simplejwt==4.3.0
