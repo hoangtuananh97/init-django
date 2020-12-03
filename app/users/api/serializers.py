@@ -1,16 +1,13 @@
 from django.contrib.auth.tokens import default_token_generator
 from django.db import transaction
-from djoser import utils
 from djoser.conf import settings
-from djoser.serializers import UserCreateSerializer as BaseUserRegistrationSerializer, UidAndTokenSerializer
-from rest_framework import serializers, exceptions
-from rest_framework.exceptions import ValidationError
-from rest_framework.permissions import AllowAny
+from djoser.serializers import UserCreateSerializer as BaseUserRegistrationSerializer
+from rest_framework import serializers
 from rest_framework_simplejwt.serializers import TokenObtainSerializer
 from rest_framework_simplejwt.tokens import RefreshToken
 
-from users.models import UserProfile, User
-from utils import ErrorJsonRender
+from app.users.models import UserProfile
+from app.utils import ErrorJsonRender
 
 
 class UserProfileSerializer(serializers.ModelSerializer):

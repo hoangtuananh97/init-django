@@ -14,7 +14,6 @@ services:
       dockerfile: ./docker/default/Dockerfile
     image: web_phuot
     container_name: web_phuot
-    command: python3 manage.py runserver 0.0.0.0:8000 --insecure
     volumes:
       - .:/code/
     depends_on:

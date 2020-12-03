@@ -1,0 +1,3 @@
+-r default.txt
+
+Faker==4.18.0

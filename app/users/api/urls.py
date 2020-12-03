@@ -1,6 +1,8 @@
 from django.conf.urls import url
+from django.urls import path
 
-from users.api.views import UserRegistrationView, UserSigninView
+from app.users import views
+from app.users.api.views import UserRegistrationView
 
 urlpatterns = [
     url(r'^signup$', UserRegistrationView.as_view(), name='signup'),

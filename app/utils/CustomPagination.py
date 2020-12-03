@@ -1,7 +1,7 @@
 from django.core.paginator import InvalidPage
 from rest_framework import pagination
 from rest_framework.response import Response
-from utils.ErrorJsonRender import PageNotFound
+from app.utils.ErrorJsonRender import PageNotFound
 
 
 class CustomPagination(pagination.PageNumberPagination):

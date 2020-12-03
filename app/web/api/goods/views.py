@@ -1,8 +1,8 @@
-from rest_framework.generics import RetrieveAPIView, ListAPIView
-from rest_framework.permissions import AllowAny, IsAuthenticated
+from rest_framework.generics import ListAPIView
+from rest_framework.permissions import IsAuthenticated
 
-from web.api.goods.serializers import ListGoodSerializer
-from web.models import Good
+from app.web.api.goods.serializers import ListGoodSerializer
+from app.web.models import Good
 
 
 class GoodSearch(ListAPIView):

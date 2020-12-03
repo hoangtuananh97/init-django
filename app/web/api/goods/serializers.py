@@ -1,6 +1,6 @@
-from rest_framework import serializers, exceptions
+from rest_framework import serializers
 
-from web.models import Good
+from app.web.models import Good
 
 
 class ListGoodSerializer(serializers.ModelSerializer):

@@ -10,9 +10,9 @@ from rest_framework.views import APIView
 from rest_framework_simplejwt.tokens import RefreshToken
 from rest_framework_simplejwt.views import TokenViewBase
 
-from users.api.serializers import UserRegistrationSerializer, UserSigninSerializer, UserActivationSerializer
-from users.models import User
-from utils import ErrorJsonRender
+from app.users.api.serializers import UserRegistrationSerializer, UserSigninSerializer, UserActivationSerializer
+from app.users.models import User
+from app.utils import ErrorJsonRender
 
 
 class UserRegistrationView(CreateAPIView):

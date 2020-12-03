@@ -2,9 +2,8 @@
 
 from django.conf import settings
 from django.db import migrations, models
-import django.db.models.deletion
 import django.utils.timezone
-import users.models
+import app.users.models
 
 
 class Migration(migrations.Migration):
@@ -37,7 +36,7 @@ class Migration(migrations.Migration):
                 'db_table': 'tb_user',
             },
             managers=[
-                ('objects', users.models.CustomUserManager()),
+                ('objects', app.users.models.CustomUserManager()),
             ],
         ),
         migrations.CreateModel(

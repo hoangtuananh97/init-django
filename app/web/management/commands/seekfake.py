@@ -6,8 +6,8 @@ import random as rd
 
 from faker.generator import random
 
-from users.models import User
-from web.models import Good, Consumer, BillDetail, Bill, StaffPerformBill
+from app.users.models import User
+from app.web import Good, Consumer, Bill, StaffPerformBill
 
 fake = Faker('en_US')
 choices = [0, 1]

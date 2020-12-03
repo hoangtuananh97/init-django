@@ -1,16 +1,16 @@
 import os
 
-os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'config.settings')
+os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'config.settings.local')
 import django
+
 django.setup()
 
 import random as rd
-from web.models import Consumer, Good, Bill, BillDetail, StaffPerformBill
+from app.web import Consumer
 from faker import Faker
 
 fake_gen = Faker()
 choices = [0, 1]
-
 
 
 def gene_consumer(n=5):
@@ -36,14 +36,8 @@ def gen_good(n=5):
                          'cheese', 'chicken', 'cottage cheese']
     for i in range(n):
         fake_code = fake_gen.bothify()
-        fake_price =
-
+        fake_price = '1234'
 
 
 if __name__ == '__main__':
     gene_consumer(5)
-
-
-
-
-

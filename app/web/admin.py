@@ -1,7 +1,8 @@
 from django.contrib import admin
-from web.models import Good, Consumer, BillDetail, Bill
+
 
 # Register your models here.
+from app.web.models import Good, BillDetail
 
 
 class GoodAdmin(admin.ModelAdmin):
@@ -18,7 +19,3 @@ class BillDetailAdmin(admin.ModelAdmin):
 
 admin.site.register(Good, GoodAdmin)
 admin.site.register(BillDetail, BillDetailAdmin)
-
-
-
-
