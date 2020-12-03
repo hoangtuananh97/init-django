@@ -1,13 +1,12 @@
 version: '3'
 
 services:
-  mysql:
-    image: mysql:5.7
-    container_name: mysql
+  postgres:
+    image: postgres
+    restart: always
+    container_name: postgres
     env_file:
-      - .envs/.default/.mysql
-    ports:
-      - '3306:3306'
+      - .envs/.default/.postgres
   web_phuot:
     build:
       context: .
@@ -17,7 +16,7 @@ services:
     volumes:
       - .:/code/
     depends_on:
-      - mysql
+      - postgres
     env_file:
       - .envs/.default/.aws
       - .envs/.default/.firebase

@@ -37,11 +37,12 @@ RUN apk update \
      lcms2-dev \
      openjpeg-dev \
      tiff-dev \
-     harfbuzz-dev
+     harfbuzz-dev \
+     postgresql-dev
 
 # Requirements are installed here to ensure they will be cached.
 COPY ./requirements /requirements
-RUN pip install -r /requirements/requirements.txt
+RUN pip install -r /requirements/local.txt
 
 ADD . /code/
 
