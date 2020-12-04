@@ -8,22 +8,19 @@ import app.users.constants as _const
 class CustomUserManager(BaseUserManager):
     use_in_migrations = True
 
-    def _create_user(self, email, username, password, **extra_fields):
+    def _create_user(self, email, password, **extra_fields):
         if not email:
             raise ValueError('Email must be required')
         email = self.normalize_email(email)
-        username = self.model.normalize_username(username)
-        user = self.model(username=username, email=email, **extra_fields)
+        user = self.model(email=email, **extra_fields)
         user.set_password(password)
         user.save(using=self._db)
         return user
 
-    def create_user(self, email, username, password=None, **extra_fields):
-        extra_fields.setdefault('is_staff', False)
-        extra_fields.setdefault('is_superuser', False)
-        return self._create_user(email, username, password, **extra_fields)
+    def create_user(self, email, password=None, **extra_fields):
+        return self._create_user(email, password, **extra_fields)
 
-    def create_superuser(self, username, password, email=None, **extra_fields):
+    def create_superuser(self, password, email=None, **extra_fields):
         extra_fields.setdefault('is_staff', True)
         extra_fields.setdefault('is_superuser', True)
 
@@ -31,17 +28,16 @@ class CustomUserManager(BaseUserManager):
             raise ValueError('Superuser must have a staff.')
         if extra_fields.get('is_superuser') is not True:
             raise ValueError('Superuser must have is superuser admin.')
-        return self._create_user(username, email, password, **extra_fields)
+        return self._create_user(email, password, **extra_fields)
 
 
 class User(AbstractUser):
     email = models.EmailField(blank=True, null=True, max_length=254, unique=True)
-    username = models.CharField(blank=True, null=True, max_length=254, unique=True)
-
+    username = None
     objects = CustomUserManager()
 
     EMAIL_FIELD = 'email'
-    USERNAME_FIELD = 'username'
+    USERNAME_FIELD = 'email'
     REQUIRED_FIELDS = []
 
     class Meta:

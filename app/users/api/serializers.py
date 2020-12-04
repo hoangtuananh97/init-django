@@ -7,7 +7,7 @@ from rest_framework_simplejwt.serializers import TokenObtainSerializer
 from rest_framework_simplejwt.tokens import RefreshToken
 
 from app.users.models import UserProfile
-from app.utils import ErrorJsonRender
+from app.utils import error_json_render
 
 
 class UserProfileSerializer(serializers.ModelSerializer):
@@ -95,7 +95,7 @@ class UserActivationSerializer(serializers.Serializer):
         self.user = self.initial_data.get("user", "")
 
         if self.user.is_active:
-            raise ErrorJsonRender.UserIsActived
+            raise error_json_render.UserIsActived
 
         is_token_valid = default_token_generator.check_token(
             self.user, self.initial_data.get("token", "")
@@ -103,4 +103,4 @@ class UserActivationSerializer(serializers.Serializer):
         if is_token_valid:
             return validated_data
         else:
-            raise ErrorJsonRender.TokenInvalid
+            raise error_json_render.TokenInvalid

@@ -1,24 +1,31 @@
 version: '3'
 
 services:
-  postgres:
-    image: postgres
-    restart: always
-    container_name: postgres
-    env_file:
-      - .envs/.default/.postgres
-  web_phuot:
+  local_postgres:
     build:
       context: .
-      dockerfile: ./docker/default/Dockerfile
-    image: web_phuot
-    container_name: web_phuot
+      dockerfile: ./docker/production/postgres/Dockerfile
+    image: local_postgres
+    restart: always
+    container_name: local_postgres
+    env_file:
+      - .envs/.default/.postgres
+#    volumes:
+#      - local_postgres_data:/var/lib/postgresql/data:Z
+#      - local_postgres_data_backups:/backups:z
+  local_web_phuot:
+    build:
+      context: .
+      dockerfile: ./docker/local/Dockerfile
+    image: local_web_phuot
+    container_name: local_web_phuot
     volumes:
       - .:/code/
     depends_on:
-      - postgres
+      - local_postgres
     env_file:
       - .envs/.default/.aws
       - .envs/.default/.firebase
+      - .envs/.default/.postgres
     ports:
-    - '80:80'
+      - '80:80'

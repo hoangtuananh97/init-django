@@ -23,8 +23,8 @@ env = environ.Env()
 
 READ_DOT_ENV_FILE = env.bool("DJANGO_READ_DOT_ENV_FILE", default=False)
 if READ_DOT_ENV_FILE:
-    # OS environment variables take precedence over variables from .env
-    env.read_env(str(ROOT_DIR / ".env"))
+    # OS environment variables take precedence over variables from .envs
+    env.read_env(str(ROOT_DIR / ".envs"))
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/3.0/howto/deployment/checklist/
@@ -134,7 +134,7 @@ WSGI_APPLICATION = "config.wsgi.application"
 if 'DATABASE_NAME' in os.environ:
     DATABASES = {
         'default': {
-            'ENGINE': 'django.db.backends.mysql',
+            'ENGINE': 'django.db.backends.postgresql',
             'NAME': os.environ.get('DATABASE_NAME'),
             'USER': os.environ.get('DATABASE_USER'),
             'PASSWORD': os.environ.get('DATABASE_PASSWORD'),
@@ -149,13 +149,20 @@ else:
             'NAME': str(ROOT_DIR / "db.sqlite3"),
         }
     }
+# https://docs.djangoproject.com/en/dev/ref/settings/#autocommit
+DATABASES["default"]["ATOMIC_REQUESTS"] = True
+
+# URLS
+# ------------------------------------------------------------------------------
+# https://docs.djangoproject.com/en/dev/ref/settings/#root-urlconf
+ROOT_URLCONF = "config.urls"
 
 # PASSWORDS
 # ------------------------------------------------------------------------------
 # https://docs.djangoproject.com/en/dev/ref/settings/#password-hashers
 PASSWORD_HASHERS = [
     # https://docs.djangoproject.com/en/dev/topics/auth/passwords/#using-bcrypt-with-django
-    'app.utils.MyBcrypt.MyBCryptSHA256PasswordHasher',
+    'app.utils.my_bcrypt.MyBCryptSHA256PasswordHasher',
 ]
 
 PASSWORD_RESET_TIMEOUT_DAYS = 1
@@ -179,7 +186,7 @@ AUTH_PASSWORD_VALIDATORS = [
         'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator',
     },
     {
-        'NAME': 'app.utils.CustomValidatePassword.CustomValidatePassword',
+        'NAME': 'app.utils.custom_validate_password.CustomValidatePassword',
         'OPTIONS': {
             'min_length': 9,
         }
@@ -259,10 +266,10 @@ REST_FRAMEWORK = {
     'DATE_FORMAT': '%Y-%m-%d',
     'TIME_FORMAT': '%H:%M:%S',
     'DEFAULT_RENDERER_CLASSES': (
-        'app.utils.CustomJsonRender.CustomJsonRender',
+        'app.utils.custom_json_render.CustomJsonRender',
     ),
-    'EXCEPTION_HANDLER': 'app.utils.ErrorJsonRender.custom_exception_handler',
-    'DEFAULT_PAGINATION_CLASS': 'app.utils.CustomPagination.CustomPagination',
+    'EXCEPTION_HANDLER': 'app.utils.error_json_render.custom_exception_handler',
+    'DEFAULT_PAGINATION_CLASS': 'app.utils.custom_pagination.CustomPagination',
 }
 # SIMPLE JWT
 # ------------------------------------------------------------------------------

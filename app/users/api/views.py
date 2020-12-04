@@ -12,7 +12,7 @@ from rest_framework_simplejwt.views import TokenViewBase
 
 from app.users.api.serializers import UserRegistrationSerializer, UserSigninSerializer, UserActivationSerializer
 from app.users.models import User
-from app.utils import ErrorJsonRender
+from app.utils import error_json_render
 
 
 class UserRegistrationView(CreateAPIView):
@@ -51,7 +51,7 @@ class UserActivationView(generics.GenericAPIView):
             data = serializer.data
             data['message'] = 'User is actived'
             return Response(data=data, status=status.HTTP_200_OK)
-        return ErrorJsonRender.BadRequestException
+        return error_json_render.BadRequestException
 
 
 class Logout(APIView):
@@ -63,7 +63,7 @@ class Logout(APIView):
             RefreshToken(refresh_token).blacklist()
             return Response(status=status.HTTP_205_RESET_CONTENT)
         except Exception as e:
-            return ErrorJsonRender.BadRequestException
+            return error_json_render.BadRequestException
 
 
 class SendEmailRestPassword(generics.GenericAPIView):

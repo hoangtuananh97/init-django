@@ -1,0 +1,11 @@
+# Mysql
+# ------------------------------------------------------------------------------
+MYSQL_HOST=
+MYSQL_PORT=3306
+MYSQL_DATABASE=
+MYSQL_USER=admin
+MYSQL_PASSWORD=
+MYSQL_ROOT_PASSWORD=
+MYSQL_ENGINE=django.db.backends.mysql
+MYSQL_CONN_MAX_AGE=60
+TZ=

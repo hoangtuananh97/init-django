@@ -1,11 +1,8 @@
-# Mysql
+# PostgreSQL
 # ------------------------------------------------------------------------------
-MYSQL_HOST=
-MYSQL_PORT=3306
-MYSQL_DATABASE=
-MYSQL_USER=admin
-MYSQL_PASSWORD=
-MYSQL_ROOT_PASSWORD=
-MYSQL_ENGINE=django.db.backends.mysql
-MYSQL_CONN_MAX_AGE=60
-TZ=
+POSTGRES_HOST=postgres
+POSTGRES_PORT=5432
+POSTGRES_DB=web_dulich
+POSTGRES_USER=hkGjouBzkVMEQHJuyCYkAbJjsZYKabyu
+POSTGRES_PASSWORD=HoWy4kbwqJdcgYAgErcc6QRdCrLKji7vX9WeD8btiPjA6L4x6CxmeztgURkuD5w6
+TZ=UTC
