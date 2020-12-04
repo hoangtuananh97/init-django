@@ -25,7 +25,7 @@ RUN apt-get update \
 COPY ./requirements /requirements
 RUN pip install -r /requirements/local.txt
 
-COPY --chown=local_web_phuot:local_web_phuot ./docker/local/web_phuot/entrypoint /entrypoint
+COPY ./docker/local/web_phuot/entrypoint /entrypoint
 RUN sed -i 's/\r$//g' /entrypoint
 RUN chmod +x /entrypoint
 
