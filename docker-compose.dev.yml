@@ -1,10 +1,10 @@
 version: '3'
 
 services:
-  local_postgres:
+  postgres:
     build:
       context: .
-      dockerfile: ./docker/production/postgres/Dockerfile
+      dockerfile: ./docker/local/postgres/Dockerfile
     image: local_postgres
     restart: always
     container_name: local_postgres
@@ -22,7 +22,7 @@ services:
     volumes:
       - .:/code/
     depends_on:
-      - local_postgres
+      - postgres
     env_file:
       - .envs/.default/.aws
       - .envs/.default/.firebase

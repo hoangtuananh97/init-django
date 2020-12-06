@@ -1,0 +1,31 @@
+version: '3'
+
+services:
+  postgres:
+    build:
+      context: .
+      dockerfile: ./docker/production/postgres/Dockerfile
+    image: production_postgres
+    restart: always
+    container_name: production_postgres
+    env_file:
+      - .envs/.production/.postgres
+    volumes:
+      - production_postgres_data:/var/lib/postgresql/data:Z
+      - production_postgres_data_backups:/backups:z
+  production_web_phuot:
+    build:
+      context: .
+      dockerfile: ./docker/production/Dockerfile
+    image: production_web_phuot
+    container_name: production_web_phuot
+    volumes:
+      - .:/code/
+    depends_on:
+      - postgres
+    env_file:
+      - .envs/.production/.aws
+      - .envs/.production/.firebase
+      - .envs/.production/.postgres
+    ports:
+      - '80:80'
