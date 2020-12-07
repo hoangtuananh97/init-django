@@ -43,6 +43,6 @@ done
 >&2 echo 'PostgreSQL is available'
 
 python manage.py makemigrations
-python manage.py makemigrate
+python manage.py migrate
 
 exec "$@"

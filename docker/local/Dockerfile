@@ -26,11 +26,13 @@ RUN apt-get update \
 COPY ./requirements /requirements
 RUN pip install -r /requirements/local.txt
 
+ADD . /code/
+
 COPY ./docker/local/web_phuot/entrypoint /entrypoint
-RUN sed -i 's/\r$//g' /entrypoint
+RUN sed -i "s/\r$//g" /entrypoint
 RUN chmod +x /entrypoint
 
-ADD . /code/
+ENTRYPOINT ["/entrypoint"]
 
 EXPOSE 80
 CMD exec uwsgi --http :80 --module config.wsgi

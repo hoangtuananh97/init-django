@@ -6,3 +6,9 @@ POSTGRES_DB=web_dulich
 POSTGRES_USER=hkGjouBzkVMEQHJuyCYkAbJjsZYKabyu
 POSTGRES_PASSWORD=HoWy4kbwqJdcgYAgErcc6QRdCrLKji7vX9WeD8btiPjA6L4x6CxmeztgURkuD5w6
 TZ=UTC
+
+#POSTGRES_HOST=webdulich02.cthwovpxjmkm.us-west-2.rds.amazonaws.com
+#POSTGRES_PORT=5432
+#POSTGRES_DB=postgres
+#POSTGRES_USER=postgres
+#POSTGRES_PASSWORD=webdulich02

@@ -11,8 +11,8 @@ services:
     env_file:
       - .envs/.production/.postgres
     volumes:
-      - production_postgres_data:/var/lib/postgresql/data:Z
-      - production_postgres_data_backups:/backups:z
+      - ./production_postgres_data:/var/lib/postgresql/data:Z
+      - ./production_postgres_data_backups:/backups:z
   production_web_phuot:
     build:
       context: .
