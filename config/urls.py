@@ -47,7 +47,7 @@ urlpatterns += [
 # API CUSTOM
 # version api: api/v1
 urlpatterns += [
-    path('api/v1/web', include('app.web.urls')),
+    path('api/v1/web/', include('app.web.urls')),
     path('api/v1/user/', include('app.users.api.urls')),
     path('api/v1/auth/signin', TokenObtainPairView.as_view(), name='signin')
 ]

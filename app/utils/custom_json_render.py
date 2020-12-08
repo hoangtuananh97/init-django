@@ -9,17 +9,14 @@ class CustomJsonRender(JSONRenderer):
                 'body': data['body'],
                 'error': data['error']
             }
-        elif data and 'links' in data and data['links']:
-            data = {
-                'status': 'OK',
-                'body': data['data'],
-                'paging': data['links'],
-                'error': None,
-            }
-        else:
-            data = {
-                'status': 'OK',
-                'body': data,
-                'error': None
-            }
-        return super(CustomJsonRender, self).render(data, accepted_media_type, renderer_context)
+            return super(CustomJsonRender, self).render(data, accepted_media_type, renderer_context)
+
+        result = {
+            'status': 'OK',
+            'body': data,
+            'error': None
+        }
+        if data and 'links' in data and data['links']:
+            result['body'] = data['data']
+            result['paging'] = data['links']
+        return super(CustomJsonRender, self).render(result, accepted_media_type, renderer_context)
