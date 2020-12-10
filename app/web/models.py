@@ -35,6 +35,10 @@ class Good(ModelWebBase):
         db_table = 'tb_goods'
         verbose_name = 'Goods'
 
+    def __repr__(self):
+        return {
+            'name': self.name,
+        }
 
 class Bill(ModelWebBase):
     status_delivery = models.BooleanField(null=True, blank=True, default=False)

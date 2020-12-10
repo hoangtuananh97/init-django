@@ -10,20 +10,31 @@ from rest_framework.views import APIView
 from rest_framework_simplejwt.tokens import RefreshToken
 from rest_framework_simplejwt.views import TokenViewBase
 
-from app.users.api.serializers import UserRegistrationSerializer, UserSigninSerializer, UserActivationSerializer
+from app.users.api.serializers import UserRegistrationSerializer, UserSigninSerializer, UserActivationSerializer, \
+    UserCreateSerializer
 from app.users.models import User
-from app.utils import error_json_render
+from app.utils import error_json_render, signals
+from app.utils.email import CustomActionEmail
 
 
 class UserRegistrationView(CreateAPIView):
-    serializer_class = UserRegistrationSerializer
+    serializer_class = UserCreateSerializer
     permission_classes = (AllowAny,)
 
-    # def post(self, request, *args, **kwargs):
-    #     serializer = self.get_serializer(data=request.data)
-    #     if serializer.is_valid(raise_exception=True):
-    #         self.perform_create(serializer)
-    #     raise ErrorJsonRender.BadRequestException
+    def post(self, request, *args, **kwargs):
+        serializer = self.get_serializer(data=request.data)
+        if serializer.is_valid(raise_exception=True):
+            user = serializer.save()
+            signals.user_registered.send(
+                sender=self.__class__,
+                user=user,
+                request=self.request
+            )
+            context = {"user": user}
+            to = [get_user_email(user)]
+            CustomActionEmail(self.request, context).send(to)
+            return Response(status=status.HTTP_201_CREATED, data=serializer.data)
+        raise error_json_render.BadRequestException
 
 
 class UserSigninView(TokenViewBase):
@@ -49,7 +60,7 @@ class UserActivationView(generics.GenericAPIView):
             self.user.is_active = True
             self.user.save()
             data = serializer.data
-            data['message'] = 'User is actived'
+            data['message'] = 'User is activated'
             return Response(data=data, status=status.HTTP_200_OK)
         return error_json_render.BadRequestException
 

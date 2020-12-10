@@ -1,3 +1,7 @@
+from django.utils.encoding import force_text, force_bytes
+from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
+
+
 def field_representation(instance, fields):
     data = {}
     for field in fields:
@@ -17,3 +21,11 @@ def many_related_field_representation(instance, fields):
                 model_data.append(model.__repr__())
             data.update({field: model_data})
     return data
+
+
+def encode_uid(pk):
+    return force_text(urlsafe_base64_encode(force_bytes(pk)))
+
+
+def decode_uid(pk):
+    return force_text(urlsafe_base64_decode(pk))
