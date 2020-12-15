@@ -1,3 +1,4 @@
+from django.db import DatabaseError
 from djoser import utils
 from djoser.compat import get_user_email
 from djoser.conf import settings
@@ -14,7 +15,7 @@ from app.users.api.serializers import UserRegistrationSerializer, UserSigninSeri
     UserCreateSerializer
 from app.users.models import User
 from app.utils import error_json_render, signals
-from app.utils.email import CustomActionEmail
+from app.utils.email import CustomActionEmail, RegisterComplete
 
 
 class UserRegistrationView(CreateAPIView):
@@ -24,16 +25,19 @@ class UserRegistrationView(CreateAPIView):
     def post(self, request, *args, **kwargs):
         serializer = self.get_serializer(data=request.data)
         if serializer.is_valid(raise_exception=True):
-            user = serializer.save()
-            signals.user_registered.send(
-                sender=self.__class__,
-                user=user,
-                request=self.request
-            )
-            context = {"user": user}
-            to = [get_user_email(user)]
-            CustomActionEmail(self.request, context).send(to)
-            return Response(status=status.HTTP_201_CREATED, data=serializer.data)
+            try:
+                user = serializer.save()
+                signals.user_registered.send(
+                    sender=self.__class__,
+                    user=user,
+                    request=self.request
+                )
+                context = {"user": user}
+                to = [get_user_email(user)]
+                CustomActionEmail(self.request, context).send(to)
+                return Response(status=status.HTTP_201_CREATED, data=serializer.data)
+            except DatabaseError as e:
+                return error_json_render.ServerDatabaseError
         raise error_json_render.BadRequestException
 
 
@@ -47,8 +51,8 @@ class UserActivationView(generics.GenericAPIView):
     serializer_class = UserActivationSerializer
 
     def post(self, request, *args, **kwargs):
+        uid = kwargs['uid']
         try:
-            uid = kwargs['uid']
             pk = utils.decode_uid(uid)
             self.user = User.objects.get(pk=pk)
             kwargs['user'] = self.user
@@ -57,11 +61,22 @@ class UserActivationView(generics.GenericAPIView):
 
         serializer = self.get_serializer(data=kwargs)
         if serializer.is_valid(raise_exception=True):
-            self.user.is_active = True
-            self.user.save()
-            data = serializer.data
-            data['message'] = 'User is activated'
-            return Response(data=data, status=status.HTTP_200_OK)
+            try:
+                self.user.is_active = True
+                self.user.save()
+                data = serializer.data
+                data['message'] = 'User is activated'
+                signals.user_registered_complete.send(
+                    sender=self.__class__,
+                    user=self.user,
+                    request=self.request
+                )
+                to = [get_user_email(self.user)]
+                context = {"user": self.user}
+                RegisterComplete(self.request, context).send(to)
+                return Response(data=data, status=status.HTTP_204_NO_CONTENT)
+            except DatabaseError as e:
+                raise error_json_render.ServerDatabaseError
         return error_json_render.BadRequestException
 
 
@@ -91,4 +106,12 @@ class SendEmailRestPassword(generics.GenericAPIView):
             to = [get_user_email(user)]
             settings.EMAIL.password_reset(self.request, context).send(to)
 
+        return Response(status=status.HTTP_204_NO_CONTENT)
+
+
+class ForgotPassword(generics.GenericAPIView):
+    permission_classes = (AllowAny,)
+    serializer_class = SendEmailResetSerializer
+
+    def get(self, request, *args, **kwargs):
         return Response(status=status.HTTP_204_NO_CONTENT)

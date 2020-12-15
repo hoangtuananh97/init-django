@@ -1,7 +1,7 @@
 from _datetime import datetime
 
 from django.core.exceptions import ValidationError
-from django.db import IntegrityError
+from django.db import IntegrityError, DatabaseError
 from rest_framework import status
 from rest_framework.exceptions import APIException
 from rest_framework.views import exception_handler
@@ -75,3 +75,8 @@ class NotMatchPassword(ValidationError):
 class IntegrityDataError(IntegrityError):
     default_detail = 'Integrity data error'
     default_code = 'integrity_data_error'
+
+class ServerDatabaseError(DatabaseError):
+    status_code = status.HTTP_500_INTERNAL_SERVER_ERROR
+    default_detail = 'Server Database Error'
+    default_code = 'server_database_error'
