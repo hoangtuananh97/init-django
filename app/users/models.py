@@ -3,6 +3,7 @@ from django.contrib.auth.base_user import BaseUserManager
 from django.contrib.auth.models import AbstractUser
 from django.db import models
 import app.users.constants as _const
+from app.utils.storages import return_image_upload_path
 
 
 class CustomUserManager(BaseUserManager):
@@ -58,7 +59,7 @@ class UserProfile(models.Model):
     )
     user = models.OneToOneField(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='user_relate_profile')
     address = models.CharField(max_length=255, blank=True)
-    photo = models.ImageField(upload_to='uploads', blank=True)
+    photo = models.ImageField(upload_to=return_image_upload_path, blank=True)
     gender = models.IntegerField(choices=GENDERS, default=0)
     phone = models.CharField(max_length=20, null=True, blank=True)
 

@@ -5,17 +5,17 @@ from djoser.conf import settings
 from djoser.serializers import SendEmailResetSerializer
 from rest_framework import generics, status, exceptions
 from rest_framework.generics import CreateAPIView
-from rest_framework.permissions import AllowAny
+from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework_simplejwt.tokens import RefreshToken
 from rest_framework_simplejwt.views import TokenViewBase
 
 from app.users.api.serializers import UserRegistrationSerializer, UserSigninSerializer, UserActivationSerializer, \
-    UserCreateSerializer
+    UserCreateSerializer, SendEmailSerializer, UpdateUserSerializer
 from app.users.models import User
 from app.utils import error_json_render, signals
-from app.utils.email import CustomActionEmail, RegisterComplete
+from app.utils.email import CustomActionEmail, RegisterComplete, SendMail, send_email_ses
 
 
 class UserRegistrationView(CreateAPIView):
@@ -34,7 +34,7 @@ class UserRegistrationView(CreateAPIView):
                 )
                 context = {"user": user}
                 to = [get_user_email(user)]
-                CustomActionEmail(self.request, context).send(to)
+                send_email_ses()
                 return Response(status=status.HTTP_201_CREATED, data=serializer.data)
             except DatabaseError as e:
                 return error_json_render.ServerDatabaseError
@@ -111,7 +111,27 @@ class SendEmailRestPassword(generics.GenericAPIView):
 
 class ForgotPassword(generics.GenericAPIView):
     permission_classes = (AllowAny,)
-    serializer_class = SendEmailResetSerializer
+    serializer_class = SendEmailSerializer
 
-    def get(self, request, *args, **kwargs):
-        return Response(status=status.HTTP_204_NO_CONTENT)
+    def post(self, request, *args, **kwargs):
+        serializer = self.get_serializer(data=request.data)
+        if serializer.is_valid(raise_exception=True):
+            email = request.data['email']
+            user = User.objects.filter(email=email).first()
+            to = [user.email]
+            context = {"user": user}
+            SendMail(self.request, context).send(to)
+            return Response(data={"Send mail": "Success"}, status=status.HTTP_204_NO_CONTENT)
+        return error_json_render.BadRequestException
+
+
+class UpdateUser(generics.GenericAPIView):
+    permission_classes = (AllowAny,)
+    serializer_class = UpdateUserSerializer
+
+    def post(self, request, *args, **kwargs):
+        serializer = self.get_serializer(data=request.data, context={'request': request})
+        if serializer.is_valid(raise_exception=True):
+            serializer.save()
+            return Response(data={"Update User": "Success"}, status=status.HTTP_200_OK)
+        return error_json_render.ServerDatabaseError

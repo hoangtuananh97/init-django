@@ -11,6 +11,7 @@ from rest_framework_simplejwt.tokens import RefreshToken
 
 from app.users.models import UserProfile
 from app.utils import error_json_render
+from app.utils.fields import Base64ImageField
 
 User = get_user_model()
 
@@ -119,7 +120,7 @@ class UserCreateSerializer(serializers.ModelSerializer):
         fields = tuple(User.REQUIRED_FIELDS) + (
             settings.LOGIN_FIELD,
             User._meta.pk.name,
-            "password"
+            "password",
         )
 
     def validate(self, attrs):
@@ -150,3 +151,37 @@ class UserCreateSerializer(serializers.ModelSerializer):
         data = super(UserCreateSerializer, self).to_representation(instance)
         del data['password']
         return data
+
+
+class SendEmailSerializer(serializers.Serializer):
+    email = serializers.CharField(required=True)
+
+    def validate(self, attrs):
+        email = attrs.get('email')
+        user = User.objects.filter(email=email, is_active=True).first()
+        if user:
+            return email
+        raise error_json_render.EmailNotFound
+
+
+class UpdateUserSerializer(serializers.Serializer):
+    photo = Base64ImageField(use_url=True)
+    address = serializers.CharField()
+    phone = serializers.CharField()
+    gender = serializers.IntegerField()
+
+    class Meta:
+        model = UserProfile
+        fields = '__all__'
+
+    def validate(self, attrs):
+        return attrs
+
+    def create(self, validated_data):
+        # if 'request' not in self.context:
+        #     raise error_json_render.LoginInvalid
+        try:
+            # validated_data['user_id'] = self.context['request'].user
+            return UserProfile.objects.create(**validated_data)
+        except IntegrityError:
+            raise error_json_render.IntegrityDataError

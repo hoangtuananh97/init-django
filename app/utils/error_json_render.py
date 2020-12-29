@@ -80,3 +80,8 @@ class ServerDatabaseError(DatabaseError):
     status_code = status.HTTP_500_INTERNAL_SERVER_ERROR
     default_detail = 'Server Database Error'
     default_code = 'server_database_error'
+
+class LoginInvalid(APIException):
+    status_code = status.HTTP_401_UNAUTHORIZED
+    default_detail = 'User unauthorized'
+    default_code = 'user_unauthorized'
