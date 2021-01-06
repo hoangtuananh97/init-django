@@ -34,7 +34,8 @@ class UserRegistrationView(CreateAPIView):
                 )
                 context = {"user": user}
                 to = [get_user_email(user)]
-                send_email_ses()
+                # send_email_ses()
+                CustomActionEmail(self.request, context).send(to)
                 return Response(status=status.HTTP_201_CREATED, data=serializer.data)
             except DatabaseError as e:
                 return error_json_render.ServerDatabaseError
@@ -126,12 +127,12 @@ class ForgotPassword(generics.GenericAPIView):
 
 
 class UpdateUser(generics.GenericAPIView):
-    permission_classes = (AllowAny,)
+    permission_classes = (IsAuthenticated,)
     serializer_class = UpdateUserSerializer
 
     def post(self, request, *args, **kwargs):
         serializer = self.get_serializer(data=request.data, context={'request': request})
         if serializer.is_valid(raise_exception=True):
             serializer.save()
-            return Response(data={"Update User": "Success"}, status=status.HTTP_200_OK)
+            return Response(serializer.data, status=status.HTTP_200_OK)
         return error_json_render.ServerDatabaseError

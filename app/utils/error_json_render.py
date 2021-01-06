@@ -68,15 +68,15 @@ class UserIsActivated(APIException):
     default_detail = 'User is activate'
     default_code = 'user_is_activated'
 
-class NotMatchPassword(ValidationError):
+class NotMatchPassword(APIException):
     default_detail = 'Not match password'
     default_code = 'not_match_password'
 
-class IntegrityDataError(IntegrityError):
+class IntegrityDataError(APIException):
     default_detail = 'Integrity data error'
     default_code = 'integrity_data_error'
 
-class ServerDatabaseError(DatabaseError):
+class ServerDatabaseError(APIException):
     status_code = status.HTTP_500_INTERNAL_SERVER_ERROR
     default_detail = 'Server Database Error'
     default_code = 'server_database_error'

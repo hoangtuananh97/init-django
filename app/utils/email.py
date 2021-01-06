@@ -73,7 +73,7 @@ def send_email_ses():
     msg['From'] = SENDER
     msg['To'] = RECIPIENT
     # Comment or delete the next line if you are not using a configuration set
-    msg.add_header('X-SES-CONFIGURATION-SET', CONFIGURATION_SET)
+    # msg.add_header('X-SES-CONFIGURATION-SET', CONFIGURATION_SET)
 
     # Record the MIME types of both parts - text/plain and text/html.
     part1 = MIMEText(BODY_TEXT, 'plain')

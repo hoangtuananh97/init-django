@@ -12,4 +12,4 @@ class MediaRootS3Boto3Storage(S3Boto3Storage):
 
 def return_image_upload_path(instance, filename):
     # file will be uploaded to MEDIA_ROOT/shop-<id>/<return-order-id>/<filename>
-    return f'{filename}'
+    return f'images/{filename}'

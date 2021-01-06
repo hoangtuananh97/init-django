@@ -319,13 +319,13 @@ SENDERNAME = 'tuan anh dep trai'
 
 # Replace recipient@example.com with a "To" address. If your account
 # is still in the sandbox, this address must be verified.
-RECIPIENT = 'hoangtuananh1997tb@gmail.com'
+RECIPIENT = 'anhlt@yopmail.com'
 
 # Replace smtp_username with your Amazon SES SMTP user name.
-USERNAME_SMTP = "AKIATDSH36E5CVEQR2WA"
+USERNAME_SMTP = "AKIAWDF4LM2UYKGNWDVJ"
 
 # Replace smtp_password with your Amazon SES SMTP password.
-PASSWORD_SMTP = "BFCrr6FVFpjvW8Xg2nfnmFpFOBBmZ96FCXFZTg3MEhpZ"
+PASSWORD_SMTP = "BNHUxxkh6JcJXumyBTymSGobGObDpih9/aV1gQ1PBlzO"
 
 # (Optional) the name of a configuration set to use for this message.
 # If you comment out this line, you also need to remove or comment out
@@ -335,8 +335,9 @@ CONFIGURATION_SET = "ConfigSetTest"
 # If you're using Amazon SES in an AWS Region other than US West (Oregon),
 # replace email-smtp.us-west-2.amazonaws.com with the Amazon SES SMTP
 # endpoint in the appropriate region.
-HOST = "email-smtp.us-west-2.amazonaws.com"
+HOST = "email-smtp.ap-southeast-1.amazonaws.com"
 PORT = 587
+AWS_REGION = 'ap-southeast-1'
 
 # DJOSER
 # ------------------------------------------------------------------------------

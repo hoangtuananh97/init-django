@@ -178,10 +178,10 @@ class UpdateUserSerializer(serializers.Serializer):
         return attrs
 
     def create(self, validated_data):
-        # if 'request' not in self.context:
-        #     raise error_json_render.LoginInvalid
+        if not self.context['request'].user:
+            raise error_json_render.LoginInvalid
         try:
-            # validated_data['user_id'] = self.context['request'].user
+            validated_data['user_id'] = self.context['request'].user
             return UserProfile.objects.create(**validated_data)
-        except IntegrityError:
-            raise error_json_render.IntegrityDataError
+        except Exception as e:
+            raise error_json_render.ServerDatabaseError
