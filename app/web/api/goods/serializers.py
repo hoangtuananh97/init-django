@@ -1,6 +1,7 @@
 from rest_framework import serializers
 
 from app.utils import error_json_render
+from app.utils.utils import field_representation
 from app.web.models import Good
 
 
@@ -8,6 +9,14 @@ class CommonGoodSerializer(serializers.ModelSerializer):
     class Meta:
         model = Good
         fields = ['id', 'name', 'status', 'price', 'created_at', 'updated_at', 'is_deleted']
+
+    def to_representation(self, instance):
+        data = super(CommonGoodSerializer, self).to_representation(instance)
+        fields = ['name']
+        data_new = field_representation(instance, fields)
+        if data_new:
+            data.update(data_new)
+        return data
 
 
 class CreateGoodSerializer(serializers.ModelSerializer):

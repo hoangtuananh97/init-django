@@ -244,6 +244,8 @@ MEDIA_ROOT = str(APPS_DIR / "media")
 # https://docs.djangoproject.com/en/dev/ref/settings/#media-url
 MEDIA_URL = "/media/"
 
+ALLOW_FILE_TYPES = ["data:image"]
+
 # REST FRAMEWORK
 # ------------------------------------------------------------------------------
 # https://www.django-rest-framework.org/
@@ -309,6 +311,33 @@ EMAIL_PORT = 587
 EMAIL_HOST_USER = 'hoangtuananh1997tb@gmail.com'
 EMAIL_HOST_PASSWORD = 'jrufemecgkquvupj'
 EMAIL_USE_TLS = True
+
+# Replace sender@example.com with your "From" address.
+# This address must be verified.
+SENDER = 'hoangtuananh1997tb@gmail.com'
+SENDERNAME = 'tuan anh dep trai'
+
+# Replace recipient@example.com with a "To" address. If your account
+# is still in the sandbox, this address must be verified.
+RECIPIENT = 'anhlt@yopmail.com'
+
+# Replace smtp_username with your Amazon SES SMTP user name.
+USERNAME_SMTP = "AKIAWDF4LM2UYKGNWDVJ"
+
+# Replace smtp_password with your Amazon SES SMTP password.
+PASSWORD_SMTP = "BNHUxxkh6JcJXumyBTymSGobGObDpih9/aV1gQ1PBlzO"
+
+# (Optional) the name of a configuration set to use for this message.
+# If you comment out this line, you also need to remove or comment out
+# the "X-SES-CONFIGURATION-SET:" header below.
+CONFIGURATION_SET = "ConfigSetTest"
+
+# If you're using Amazon SES in an AWS Region other than US West (Oregon),
+# replace email-smtp.us-west-2.amazonaws.com with the Amazon SES SMTP
+# endpoint in the appropriate region.
+HOST = "email-smtp.ap-southeast-1.amazonaws.com"
+PORT = 587
+AWS_REGION = 'ap-southeast-1'
 
 # DJOSER
 # ------------------------------------------------------------------------------

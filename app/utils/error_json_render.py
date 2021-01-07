@@ -1,5 +1,7 @@
 from _datetime import datetime
 
+from django.core.exceptions import ValidationError
+from django.db import IntegrityError, DatabaseError
 from rest_framework import status
 from rest_framework.exceptions import APIException
 from rest_framework.views import exception_handler
@@ -61,7 +63,25 @@ class TokenInvalid(APIException):
     default_code = 'token_not_found'
 
 
-class UserIsActived(APIException):
+class UserIsActivated(APIException):
     status_code = status.HTTP_400_BAD_REQUEST
-    default_detail = 'User is actived'
-    default_code = 'user_is_actived'
+    default_detail = 'User is activate'
+    default_code = 'user_is_activated'
+
+class NotMatchPassword(APIException):
+    default_detail = 'Not match password'
+    default_code = 'not_match_password'
+
+class IntegrityDataError(APIException):
+    default_detail = 'Integrity data error'
+    default_code = 'integrity_data_error'
+
+class ServerDatabaseError(APIException):
+    status_code = status.HTTP_500_INTERNAL_SERVER_ERROR
+    default_detail = 'Server Database Error'
+    default_code = 'server_database_error'
+
+class LoginInvalid(APIException):
+    status_code = status.HTTP_401_UNAUTHORIZED
+    default_detail = 'User unauthorized'
+    default_code = 'user_unauthorized'

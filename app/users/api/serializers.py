@@ -1,5 +1,8 @@
+from django.contrib.auth import get_user_model
+from django.contrib.auth.password_validation import validate_password
 from django.contrib.auth.tokens import default_token_generator
-from django.db import transaction
+from django.core import exceptions
+from django.db import transaction, IntegrityError
 from djoser.conf import settings
 from djoser.serializers import UserCreateSerializer as BaseUserRegistrationSerializer
 from rest_framework import serializers
@@ -8,6 +11,9 @@ from rest_framework_simplejwt.tokens import RefreshToken
 
 from app.users.models import UserProfile
 from app.utils import error_json_render
+from app.utils.fields import Base64ImageField
+
+User = get_user_model()
 
 
 class UserProfileSerializer(serializers.ModelSerializer):
@@ -95,7 +101,7 @@ class UserActivationSerializer(serializers.Serializer):
         self.user = self.initial_data.get("user", "")
 
         if self.user.is_active:
-            raise error_json_render.UserIsActived
+            raise error_json_render.UserIsActivated
 
         is_token_valid = default_token_generator.check_token(
             self.user, self.initial_data.get("token", "")
@@ -104,3 +110,78 @@ class UserActivationSerializer(serializers.Serializer):
             return validated_data
         else:
             raise error_json_render.TokenInvalid
+
+
+class UserCreateSerializer(serializers.ModelSerializer):
+    password = serializers.CharField(required=True)
+
+    class Meta:
+        model = User
+        fields = tuple(User.REQUIRED_FIELDS) + (
+            settings.LOGIN_FIELD,
+            User._meta.pk.name,
+            "password",
+        )
+
+    def validate(self, attrs):
+        user = User(**attrs)
+        password = attrs.get("password")
+
+        try:
+            validate_password(password, user)
+        except exceptions.ValidationError as e:
+            return error_json_render.NotMatchPassword
+
+        return attrs
+
+    def create(self, validated_data):
+        try:
+            user = self.perform_create(validated_data)
+        except IntegrityError:
+            return error_json_render.IntegrityDataError
+        return user
+
+    def perform_create(self, validated_data):
+        user = User.objects.create_user(**validated_data)
+        user.is_active = False
+        user.save(update_fields=["is_active"])
+        return user
+
+    def to_representation(self, instance):
+        data = super(UserCreateSerializer, self).to_representation(instance)
+        del data['password']
+        return data
+
+
+class SendEmailSerializer(serializers.Serializer):
+    email = serializers.CharField(required=True)
+
+    def validate(self, attrs):
+        email = attrs.get('email')
+        user = User.objects.filter(email=email, is_active=True).first()
+        if user:
+            return email
+        raise error_json_render.EmailNotFound
+
+
+class UpdateUserSerializer(serializers.Serializer):
+    photo = Base64ImageField(use_url=True)
+    address = serializers.CharField()
+    phone = serializers.CharField()
+    gender = serializers.IntegerField()
+
+    class Meta:
+        model = UserProfile
+        fields = '__all__'
+
+    def validate(self, attrs):
+        return attrs
+
+    def create(self, validated_data):
+        if not self.context['request'].user:
+            raise error_json_render.LoginInvalid
+        try:
+            validated_data['user_id'] = self.context['request'].user
+            return UserProfile.objects.create(**validated_data)
+        except Exception as e:
+            raise error_json_render.ServerDatabaseError
