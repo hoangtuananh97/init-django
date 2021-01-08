@@ -153,7 +153,7 @@ class UserCreateSerializer(serializers.ModelSerializer):
         return data
 
 
-class SendEmailSerializer(serializers.Serializer):
+class SendEmailSerializer(serializers.ModelSerializer):
     email = serializers.CharField(required=True)
 
     def validate(self, attrs):
@@ -164,7 +164,7 @@ class SendEmailSerializer(serializers.Serializer):
         raise error_json_render.EmailNotFound
 
 
-class UpdateUserSerializer(serializers.Serializer):
+class UpdateUserSerializer(serializers.ModelSerializer):
     photo = Base64ImageField(use_url=True)
     address = serializers.CharField()
     phone = serializers.CharField()
@@ -185,3 +185,18 @@ class UpdateUserSerializer(serializers.Serializer):
             return UserProfile.objects.create(**validated_data)
         except Exception as e:
             raise error_json_render.ServerDatabaseError
+
+
+class ListUserSerializer(serializers.ModelSerializer):
+    fullname = serializers.SerializerMethodField()
+    user_profile = UserProfileSerializer(read_only=True, source='user_relate_profile')
+
+    class Meta:
+        model = User
+        fields = ['id', 'fullname', 'email', 'user_profile']
+
+    def get_fullname(self, obj):
+        return '{first_name} {last_name}'.format(first_name=obj.first_name, last_name=obj.last_name)
+
+    def get_user_profile(self, obj):
+        return obj.user_relate_profile

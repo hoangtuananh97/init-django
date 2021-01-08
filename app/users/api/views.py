@@ -12,7 +12,7 @@ from rest_framework_simplejwt.tokens import RefreshToken
 from rest_framework_simplejwt.views import TokenViewBase
 
 from app.users.api.serializers import UserRegistrationSerializer, UserSigninSerializer, UserActivationSerializer, \
-    UserCreateSerializer, SendEmailSerializer, UpdateUserSerializer
+    UserCreateSerializer, SendEmailSerializer, UpdateUserSerializer, ListUserSerializer
 from app.users.models import User
 from app.utils import error_json_render, signals
 from app.utils.email import CustomActionEmail, RegisterComplete, SendMail, send_email_ses
@@ -136,3 +136,14 @@ class UpdateUser(generics.GenericAPIView):
             serializer.save()
             return Response(serializer.data, status=status.HTTP_200_OK)
         return error_json_render.ServerDatabaseError
+
+
+class SearchUser(generics.ListAPIView):
+    permission_classes = (AllowAny,)
+    serializer_class = ListUserSerializer
+
+    def get_queryset(self):
+        users = User.objects.select_related('user_relate_profile').all()
+
+        return users
+

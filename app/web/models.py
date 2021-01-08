@@ -2,6 +2,7 @@ from django.db import models
 
 # Create your models here.
 from app.users.models import User
+from app.utils.storages import return_image_upload_path
 
 
 class ModelWebBase(models.Model):
@@ -19,6 +20,7 @@ class Consumer(ModelWebBase):
     password = models.CharField(max_length=200, null=True)
     phone = models.CharField(max_length=20, null=False, blank=True)
     address = models.TextField(max_length=200, null=True, blank=True)
+    image = models.ImageField(upload_to=return_image_upload_path, blank=True)
 
     class Meta:
         db_table = 'tb_consumer'
@@ -39,6 +41,17 @@ class Good(ModelWebBase):
         return {
             'name': self.name,
         }
+
+
+class ImageGood(models.Model):
+    image = models.ImageField(upload_to=return_image_upload_path, blank=True)
+    good = models.ForeignKey(Good, null=True, blank=True, related_name='bd_good_image',
+                             on_delete=models.DO_NOTHING)
+
+    class Meta:
+        db_table = 'tb_image'
+        verbose_name = 'ImageGood'
+
 
 class Bill(ModelWebBase):
     status_delivery = models.BooleanField(null=True, blank=True, default=False)

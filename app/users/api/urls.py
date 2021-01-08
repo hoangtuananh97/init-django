@@ -1,6 +1,7 @@
 from django.conf.urls import url
 
-from app.users.api.views import UserRegistrationView, UserSigninView, UserActivationView, ForgotPassword, UpdateUser
+from app.users.api.views import UserRegistrationView, UserSigninView, UserActivationView, ForgotPassword, UpdateUser, \
+    SearchUser
 
 urlpatterns = [
     url(r'^signup$', UserRegistrationView.as_view(), name='signup'),
@@ -8,4 +9,5 @@ urlpatterns = [
     url(r'^activate/(?P<uid>[\w-]+)/(?P<token>[\w-]+)$', UserActivationView.as_view(), name="activate"),
     url(r'^forgot-password$', ForgotPassword.as_view(), name="forgot_password"),
     url(r'^update$', UpdateUser.as_view(), name="update_user"),
+    url(r'^search$', SearchUser.as_view(), name="search_user"),
 ]
