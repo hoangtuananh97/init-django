@@ -87,7 +87,7 @@ class UserRegistrationSerializer(BaseUserRegistrationSerializer):
         return data
 
 
-class UserActivationSerializer(serializers.Serializer):
+class UserActivationSerializer(serializers.ModelSerializer):
     uid = serializers.CharField()
     token = serializers.CharField()
 
@@ -164,7 +164,7 @@ class SendEmailSerializer(serializers.ModelSerializer):
         raise error_json_render.EmailNotFound
 
 
-class UpdateUserSerializer(serializers.ModelSerializer):
+class UserProfileSerializerCreate(serializers.ModelSerializer):
     photo = Base64ImageField(use_url=True)
     address = serializers.CharField()
     phone = serializers.CharField()
@@ -172,7 +172,7 @@ class UpdateUserSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = UserProfile
-        fields = '__all__'
+        fields = ['photo', 'address', 'phone', 'gender']
 
     def validate(self, attrs):
         return attrs
@@ -181,10 +181,26 @@ class UpdateUserSerializer(serializers.ModelSerializer):
         if not self.context['request'].user:
             raise error_json_render.LoginInvalid
         try:
-            validated_data['user_id'] = self.context['request'].user
+            validated_data['user_id'] = self.context['request'].user.id
             return UserProfile.objects.create(**validated_data)
         except Exception as e:
             raise error_json_render.ServerDatabaseError
+
+
+class UserProfileSerializerUpdate(serializers.ModelSerializer):
+    id = serializers.IntegerField(read_only=True)
+    photo = Base64ImageField(use_url=True, required=False)
+
+    class Meta:
+        model = UserProfile
+        fields = ['id', 'photo', 'address', 'phone', 'gender']
+
+    def validate(self, attrs):
+        return attrs
+
+    def update(self, instance, validated_data):
+        print(123)
+        return instance
 
 
 class ListUserSerializer(serializers.ModelSerializer):

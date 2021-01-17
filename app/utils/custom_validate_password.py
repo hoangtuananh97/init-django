@@ -2,11 +2,12 @@ from django.core.exceptions import ValidationError
 
 
 class CustomValidatePassword:
-
+    # min length password
     def __init__(self, min_length=8):
         self.min_length = min_length
         self.msg = 0
 
+    # pass must have digit, alpha, special character
     def validate(self, password, user=None):
 
         special_characters = "[~\!@#\$%\^&\*\(\)_\+{}\":;'\[\]]+=_-"

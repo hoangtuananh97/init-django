@@ -10,5 +10,7 @@ class MediaRootS3Boto3Storage(S3Boto3Storage):
     location = "media"
     file_overwrite = False
 
+
+# return path image
 def return_image_upload_path(instance, filename):
     return f'images/{filename}'

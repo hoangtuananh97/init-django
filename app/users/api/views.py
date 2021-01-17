@@ -11,11 +11,12 @@ from rest_framework.views import APIView
 from rest_framework_simplejwt.tokens import RefreshToken
 from rest_framework_simplejwt.views import TokenViewBase
 
-from app.users.api.serializers import UserRegistrationSerializer, UserSigninSerializer, UserActivationSerializer, \
-    UserCreateSerializer, SendEmailSerializer, UpdateUserSerializer, ListUserSerializer
-from app.users.models import User
+from app.users.api.serializers import UserSigninSerializer, UserActivationSerializer, \
+    UserCreateSerializer, SendEmailSerializer, ListUserSerializer, UserProfileSerializerCreate, \
+    UserProfileSerializerUpdate
+from app.users.models import User, UserProfile
 from app.utils import error_json_render, signals
-from app.utils.email import CustomActionEmail, RegisterComplete, SendMail, send_email_ses
+from app.utils.email import CustomActionEmail, RegisterComplete, SendMail
 
 
 class UserRegistrationView(CreateAPIView):
@@ -126,16 +127,38 @@ class ForgotPassword(generics.GenericAPIView):
         return error_json_render.BadRequestException
 
 
-class UpdateUser(generics.GenericAPIView):
+class UserProfileCreate(generics.CreateAPIView):
     permission_classes = (IsAuthenticated,)
-    serializer_class = UpdateUserSerializer
+    serializer_class = UserProfileSerializerCreate
 
     def post(self, request, *args, **kwargs):
         serializer = self.get_serializer(data=request.data, context={'request': request})
         if serializer.is_valid(raise_exception=True):
-            serializer.save()
+            self.perform_create(serializer)
             return Response(serializer.data, status=status.HTTP_200_OK)
         return error_json_render.ServerDatabaseError
+
+
+class UserProfileUpdate(generics.UpdateAPIView):
+    permission_classes = (IsAuthenticated,)
+    serializer_class = UserProfileSerializerUpdate
+
+    def get_object(self):
+        user = self.request.user
+        if not user.is_active or user.is_deleted:
+            raise error_json_render.UserIsActivatedOrIsDeleted
+        try:
+            return UserProfile.objects.get(id=user.id)
+        except UserProfile.DoesNotExist:
+            raise error_json_render.UserNotFound
+
+    def put(self, request, *args, **kwargs):
+        user_profile = self.get_object()
+        serializer = self.get_serializer(user_profile, data=request.data)
+        if serializer.is_valid(raise_exception=True):
+            self.perform_update(serializer)
+            return Response(serializer.data, status.HTTP_204_NO_CONTENT)
+        raise error_json_render.BadRequestException
 
 
 class SearchUser(generics.ListAPIView):
@@ -146,4 +169,3 @@ class SearchUser(generics.ListAPIView):
         users = User.objects.select_related('user_relate_profile').all()
 
         return users
-

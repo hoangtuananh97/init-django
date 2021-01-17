@@ -34,6 +34,8 @@ class CustomUserManager(BaseUserManager):
 
 class User(AbstractUser):
     email = models.EmailField(blank=True, null=True, max_length=254, unique=True)
+    is_deleted = models.BooleanField(default=0)
+
     username = None
     objects = CustomUserManager()
 
