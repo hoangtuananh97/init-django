@@ -187,11 +187,11 @@ def create_presigned_post(object_name, fields=None, conditions=None, expiration=
                               config=boto3.session.Config(signature_version='s3v4'),
                               region_name=AWS_S3_REGION_NAME)
     try:
-        s3_object_name = str(uuid4()) + '.png'
+        s3_object_name = str(uuid4()) + '.png'  # fixable type ex: png, jpg
         params = {
-            "Key": 'hello.jpg',
+            "Key": 'media/images/{}'.format(s3_object_name),
             "Bucket": AWS_STORAGE_BUCKET_NAME,
-            "ContentType": 'image/jpeg',
+            # "ContentType": 'image/png', # add will restrict type, remove post add type
         }
         response = s3client.generate_presigned_url(ClientMethod="put_object",
                                                    Params=params,
