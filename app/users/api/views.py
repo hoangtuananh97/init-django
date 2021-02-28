@@ -1,9 +1,15 @@
+from uuid import uuid4
+
+import boto3
+from botocore.exceptions import ClientError
 from django.db import DatabaseError
 from djoser import utils
 from djoser.compat import get_user_email
 from djoser.conf import settings
 from djoser.serializers import SendEmailResetSerializer
 from rest_framework import generics, status, exceptions
+from rest_framework.authentication import SessionAuthentication, BasicAuthentication
+from rest_framework.decorators import api_view, permission_classes
 from rest_framework.generics import CreateAPIView
 from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.response import Response
@@ -17,6 +23,7 @@ from app.users.api.serializers import UserSigninSerializer, UserActivationSerial
 from app.users.models import User, UserProfile
 from app.utils import error_json_render, signals
 from app.utils.email import CustomActionEmail, RegisterComplete, SendMail
+from config.settings.local import AWS_STORAGE_BUCKET_NAME, AWS_ACCESS_KEY_ID, AWS_SECRET_ACCESS_KEY, AWS_S3_REGION_NAME
 
 
 class UserRegistrationView(CreateAPIView):
@@ -152,7 +159,7 @@ class UserProfileUpdate(generics.UpdateAPIView):
         except UserProfile.DoesNotExist:
             raise error_json_render.UserNotFound
 
-    def put(self, request, *args, **kwargs):
+    def delete(self, request, *args, **kwargs):
         user_profile = self.get_object()
         serializer = self.get_serializer(user_profile, data=request.data)
         if serializer.is_valid(raise_exception=True):
@@ -163,9 +170,33 @@ class UserProfileUpdate(generics.UpdateAPIView):
 
 class SearchUser(generics.ListAPIView):
     permission_classes = (AllowAny,)
+    authentication_classes = [SessionAuthentication, BasicAuthentication]
     serializer_class = ListUserSerializer
 
     def get_queryset(self):
         users = User.objects.select_related('user_relate_profile').all()
 
         return users
+
+
+@api_view(['POST', 'PUT'])
+@permission_classes((AllowAny,))
+def create_presigned_post(object_name, fields=None, conditions=None, expiration=3600):
+    session = boto3.Session(aws_access_key_id=AWS_ACCESS_KEY_ID, aws_secret_access_key=AWS_SECRET_ACCESS_KEY)
+    s3client = session.client('s3',
+                              config=boto3.session.Config(signature_version='s3v4'),
+                              region_name=AWS_S3_REGION_NAME)
+    try:
+        s3_object_name = str(uuid4()) + '.png'
+        params = {
+            "Key": 'hello.jpg',
+            "Bucket": AWS_STORAGE_BUCKET_NAME,
+            "ContentType": 'image/jpeg',
+        }
+        response = s3client.generate_presigned_url(ClientMethod="put_object",
+                                                   Params=params,
+                                                   ExpiresIn=3600)
+        print("response", response)
+        return Response({"presigned_post": response}, status=status.HTTP_200_OK)
+    except ClientError as e:
+        print(e)
