@@ -1,11 +1,11 @@
 from rest_framework import status
-from rest_framework.generics import ListAPIView, CreateAPIView
+from rest_framework.generics import ListAPIView, CreateAPIView, ListCreateAPIView
 from rest_framework.permissions import IsAuthenticated, AllowAny
 from rest_framework.response import Response
 
 from app.utils import error_json_render
-from app.web.api.goods.serializers import CommonGoodSerializer, CreateGoodSerializer
-from app.web.models import Good
+from app.web.api.goods.serializers import CommonGoodSerializer, CreateGoodSerializer, ListImageGood
+from app.web.models import Good, ImageGood
 
 
 class GoodSearch(ListAPIView):
@@ -16,7 +16,7 @@ class GoodSearch(ListAPIView):
         return Good.objects.all()
 
 
-class GoodCreateNew(CreateAPIView):
+class GoodCreateNew(ListCreateAPIView):
     permission_classes = [IsAuthenticated]
     serializer_class = CreateGoodSerializer
 
@@ -24,5 +24,6 @@ class GoodCreateNew(CreateAPIView):
         serializer = self.get_serializer(data=request.data)
         if serializer.is_valid(raise_exception=True):
             self.perform_create(serializer)
-            return Response(data=serializer.data, status=status.HTTP_201_CREATED)
+            data = serializer.data
+            return Response(data=data, status=status.HTTP_201_CREATED)
         raise error_json_render.BadRequestException

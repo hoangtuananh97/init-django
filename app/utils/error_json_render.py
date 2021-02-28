@@ -43,6 +43,7 @@ class PageNotFound(APIException):
 class BadRequestException(APIException):
     status_code = 400
     default_detail = 'Bad request'
+    default_code = 'bad_request'
 
 
 class EmailNotFound(APIException):
@@ -68,20 +69,36 @@ class UserIsActivated(APIException):
     default_detail = 'User is activate'
     default_code = 'user_is_activated'
 
+
 class NotMatchPassword(APIException):
     default_detail = 'Not match password'
     default_code = 'not_match_password'
 
+
 class IntegrityDataError(APIException):
     default_detail = 'Integrity data error'
     default_code = 'integrity_data_error'
+
 
 class ServerDatabaseError(APIException):
     status_code = status.HTTP_500_INTERNAL_SERVER_ERROR
     default_detail = 'Server Database Error'
     default_code = 'server_database_error'
 
+
 class LoginInvalid(APIException):
     status_code = status.HTTP_401_UNAUTHORIZED
     default_detail = 'User unauthorized'
     default_code = 'user_unauthorized'
+
+
+class UserNotFound(APIException):
+    status_code = status.HTTP_404_NOT_FOUND
+    default_detail = 'User not found'
+    default_code = 'user_not_found'
+
+
+class UserIsActivatedOrIsDeleted(APIException):
+    status_code = status.HTTP_400_BAD_REQUEST
+    default_detail = 'User is not activate or deleted'
+    default_code = 'user_is_activated_or_deleted'

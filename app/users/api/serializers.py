@@ -87,7 +87,7 @@ class UserRegistrationSerializer(BaseUserRegistrationSerializer):
         return data
 
 
-class UserActivationSerializer(serializers.Serializer):
+class UserActivationSerializer(serializers.ModelSerializer):
     uid = serializers.CharField()
     token = serializers.CharField()
 
@@ -153,7 +153,7 @@ class UserCreateSerializer(serializers.ModelSerializer):
         return data
 
 
-class SendEmailSerializer(serializers.Serializer):
+class SendEmailSerializer(serializers.ModelSerializer):
     email = serializers.CharField(required=True)
 
     def validate(self, attrs):
@@ -164,7 +164,7 @@ class SendEmailSerializer(serializers.Serializer):
         raise error_json_render.EmailNotFound
 
 
-class UpdateUserSerializer(serializers.Serializer):
+class UserProfileSerializerCreate(serializers.ModelSerializer):
     photo = Base64ImageField(use_url=True)
     address = serializers.CharField()
     phone = serializers.CharField()
@@ -172,7 +172,7 @@ class UpdateUserSerializer(serializers.Serializer):
 
     class Meta:
         model = UserProfile
-        fields = '__all__'
+        fields = ['photo', 'address', 'phone', 'gender']
 
     def validate(self, attrs):
         return attrs
@@ -181,7 +181,38 @@ class UpdateUserSerializer(serializers.Serializer):
         if not self.context['request'].user:
             raise error_json_render.LoginInvalid
         try:
-            validated_data['user_id'] = self.context['request'].user
+            validated_data['user_id'] = self.context['request'].user.id
             return UserProfile.objects.create(**validated_data)
         except Exception as e:
             raise error_json_render.ServerDatabaseError
+
+
+class UserProfileSerializerUpdate(serializers.ModelSerializer):
+    id = serializers.IntegerField(read_only=True)
+    photo = Base64ImageField(use_url=True, required=False)
+
+    class Meta:
+        model = UserProfile
+        fields = ['id', 'photo', 'address', 'phone', 'gender']
+
+    def validate(self, attrs):
+        return attrs
+
+    def update(self, instance, validated_data):
+        print(123)
+        return instance
+
+
+class ListUserSerializer(serializers.ModelSerializer):
+    fullname = serializers.SerializerMethodField()
+    user_profile = UserProfileSerializer(read_only=True, source='user_relate_profile')
+
+    class Meta:
+        model = User
+        fields = ['id', 'fullname', 'email', 'user_profile', 'date_joined']
+
+    def get_fullname(self, obj):
+        return '{first_name} {last_name}'.format(first_name=obj.first_name, last_name=obj.last_name)
+
+    def get_user_profile(self, obj):
+        return obj.user_relate_profile

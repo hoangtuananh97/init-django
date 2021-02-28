@@ -48,7 +48,7 @@ class Base64ImageField(serializers.ImageField):
                 self.fail('invalid_image')
 
             # Generate file name:
-            file_name = str(uuid.uuid4())[:12]  # 12 characters are more than enough.
+            file_name = str(uuid.uuid4())
             # Get the file name extension:
             file_extension = self.get_file_extension(file_name, decoded_file)
             complete_file_name = "%s.%s" % (file_name, file_extension,)

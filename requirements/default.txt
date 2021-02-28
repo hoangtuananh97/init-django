@@ -19,7 +19,7 @@ Pillow
 Collectfast
 # password
 # ------------------------------------------------------------------------------
-bcrypt
+bcryptf
 # firebase
 # ------------------------------------------------------------------------------
 firebase-admin
@@ -38,5 +38,6 @@ django-templated-mail==1.1.1
 django-widget-tweaks==1.4.8
 djangorestframework==3.10.3
 djangorestframework-simplejwt==4.3.0
+djangorestframework-jwt==1.11.0
 django-compressor
 django-storages
