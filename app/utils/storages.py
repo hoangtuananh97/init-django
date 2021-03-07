@@ -131,3 +131,20 @@ class S3Boto3StorageABC(BaseStorage):
             url = "{}//{}/{}".format(
                 self.url_protocol, self.custom_domain, filepath_to_uri(name))
             return url
+
+
+# model field char
+def get_link(request, path_file):
+    s3_boto3_storage = MediaRootS3Boto3Storage()
+    custom_domain = setting('AWS_S3_CUSTOM_DOMAIN')
+    if custom_domain:
+        path_file = s3_boto3_storage._normalize_name(s3_boto3_storage._clean_name(path_file))
+        if s3_boto3_storage.custom_domain:
+            url = "{}//{}/{}".format(
+                s3_boto3_storage.url_protocol, s3_boto3_storage.custom_domain, filepath_to_uri(path_file))
+            return url
+    else:
+        request = request.context.get('request', None)
+        if request is not None:
+            return '{}://{}/{}'.format(request.scheme, request.get_host(), path_file)
+    return path_file

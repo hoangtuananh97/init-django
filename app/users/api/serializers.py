@@ -21,7 +21,10 @@ class UserProfileSerializer(serializers.ModelSerializer):
         model = UserProfile
         fields = ['address', 'photo', 'gender', 'phone']
 
-
+    def to_representation(self, instance):
+        data = super(UserProfileSerializer, self).to_representation(instance)
+        # data['photo'] = get_link(self, data['photo'])
+        return data
 # class UserRegistrationSerializer(serializers.ModelSerializer):
 #     # profile = UserProfileSerializer(required=False)
 #
