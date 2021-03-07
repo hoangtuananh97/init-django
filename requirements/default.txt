@@ -14,7 +14,7 @@ sqlparse==0.3.0
 text-unidecode==1.3
 urllib3==1.25.6
 qrcode
-boto3
+boto3==1.17.17
 Pillow
 Collectfast
 # password

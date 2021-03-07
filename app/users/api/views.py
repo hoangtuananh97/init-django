@@ -9,8 +9,9 @@ from djoser.conf import settings
 from djoser.serializers import SendEmailResetSerializer
 from rest_framework import generics, status, exceptions
 from rest_framework.authentication import SessionAuthentication, BasicAuthentication
-from rest_framework.decorators import api_view, permission_classes
+from rest_framework.decorators import api_view, permission_classes, parser_classes
 from rest_framework.generics import CreateAPIView
+from rest_framework.parsers import MultiPartParser, FormParser
 from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.views import APIView
@@ -23,7 +24,9 @@ from app.users.api.serializers import UserSigninSerializer, UserActivationSerial
 from app.users.models import User, UserProfile
 from app.utils import error_json_render, signals
 from app.utils.email import CustomActionEmail, RegisterComplete, SendMail
-from config.settings.local import AWS_STORAGE_BUCKET_NAME, AWS_ACCESS_KEY_ID, AWS_SECRET_ACCESS_KEY, AWS_S3_REGION_NAME
+from app.utils.error_json_render import ErrorFormatFile
+from app.utils.storages import MediaRootS3Boto3Storage
+from config.settings.local import AWS_STORAGE_BUCKET_NAME, AWS_ACCESS_KEY_ID, AWS_SECRET_ACCESS_KEY
 
 
 class UserRegistrationView(CreateAPIView):
@@ -179,13 +182,24 @@ class SearchUser(generics.ListAPIView):
         return users
 
 
+@api_view(['POST', ])
+@permission_classes((AllowAny,))
+@parser_classes((MultiPartParser, FormParser,))
+def upload_file(request):
+    try:
+        upload = MediaRootS3Boto3Storage()
+        content = request.FILES['file']
+        path_output = upload.save_file_zip(content, True)
+        return Response(data={'url': path_output}, status=status.HTTP_201_CREATED)
+    except Exception as ex:
+        raise ErrorFormatFile(detail=ex)
+
+
 @api_view(['POST', 'PUT'])
 @permission_classes((AllowAny,))
 def create_presigned_post(object_name, fields=None, conditions=None, expiration=3600):
     session = boto3.Session(aws_access_key_id=AWS_ACCESS_KEY_ID, aws_secret_access_key=AWS_SECRET_ACCESS_KEY)
-    s3client = session.client('s3',
-                              config=boto3.session.Config(signature_version='s3v4'),
-                              region_name=AWS_S3_REGION_NAME)
+    s3client = session.client('s3', )
     try:
         s3_object_name = str(uuid4()) + '.png'  # fixable type ex: png, jpg
         params = {
@@ -193,9 +207,24 @@ def create_presigned_post(object_name, fields=None, conditions=None, expiration=
             "Bucket": AWS_STORAGE_BUCKET_NAME,
             # "ContentType": 'image/png', # add will restrict type, remove post add type
         }
-        response = s3client.generate_presigned_url(ClientMethod="put_object",
-                                                   Params=params,
-                                                   ExpiresIn=3600)
+        # response = s3client.generate_presigned_url(ClientMethod="put_object",
+        #                                            Params=params,
+        #                                            ExpiresIn=3600)
+
+        fields = {"acl": "public-read", "Content-Type": "image/png"}
+        conditions = [
+            {"bucket": AWS_STORAGE_BUCKET_NAME},
+            {"acl": "public-read"},
+            {"Content-Type": "image/png"},
+            ["content-length-range", 1, 10485760],
+        ]
+
+        response = s3client.generate_presigned_post(AWS_STORAGE_BUCKET_NAME,
+                                                    'media/images/{}'.format(s3_object_name),
+                                                    Fields=fields,
+                                                    Conditions=conditions,
+                                                    ExpiresIn=expiration)
+
         print("response", response)
         return Response({"presigned_post": response}, status=status.HTTP_200_OK)
     except ClientError as e:

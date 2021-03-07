@@ -102,3 +102,14 @@ class UserIsActivatedOrIsDeleted(APIException):
     status_code = status.HTTP_400_BAD_REQUEST
     default_detail = 'User is not activate or deleted'
     default_code = 'user_is_activated_or_deleted'
+
+class ErrorFormatFile(APIException):
+    status_code = status.HTTP_400_BAD_REQUEST
+    default_detail = 'Error Format File'
+    default_code = 'error_format_file'
+
+
+class ErrorMaxLengthFile(APIException):
+    status_code = status.HTTP_400_BAD_REQUEST
+    default_detail = 'Error Max length File'
+    default_code = 'error_length_file'

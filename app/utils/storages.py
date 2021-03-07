@@ -1,15 +1,27 @@
+import math
+import os
 import posixpath
-from datetime import timedelta, datetime
+from uuid import uuid4
 
 from django.core.exceptions import SuspiciousOperation
 from django.utils.deconstruct import deconstructible
 from django.utils.encoding import filepath_to_uri
+from django.utils.timezone import now
 from storages.backends.s3boto3 import S3Boto3Storage
 from storages.base import BaseStorage
 from storages.utils import (
-    check_location, get_available_overwrite_name, lookup_env, safe_join,
-    setting, to_bytes,
-)
+    safe_join,
+    setting, )
+
+
+def convert_size(size_bytes):
+    if size_bytes == 0:
+        return "0B"
+    size_name = ("B", "KB", "MB", "GB", "TB", "PB", "EB", "ZB", "YB")
+    i = int(math.floor(math.log(size_bytes, 1024)))
+    p = math.pow(1024, i)
+    s = round(size_bytes / p, 2)
+    return "%s %s" % (s, size_name[i])
 
 
 class StaticRootS3Boto3Storage(S3Boto3Storage):
@@ -18,8 +30,57 @@ class StaticRootS3Boto3Storage(S3Boto3Storage):
 
 
 class MediaRootS3Boto3Storage(S3Boto3Storage):
-    location = "media"
     file_overwrite = False
+
+    def verify_file(self, content, validate_type_file, max_size_file, keep_name_file) -> tuple:
+        file_size = content.size
+        try:
+            file_type = content.content_type.split('/')[1]
+            file_type = file_type.lower()
+        except Exception as e:
+            raise ValueError('Error Format File. You need input file format {}'.format(','.join(validate_type_file)))
+
+        if file_type not in validate_type_file:
+            raise ValueError('File only {}'.format(','.join(validate_type_file)))
+        if file_size > max_size_file:
+            raise ValueError('Error Max length File is {} while file upload is {}'.format(convert_size(max_size_file),
+                                                                                          convert_size(file_size)))
+
+        if keep_name_file:
+            file_name = content.name
+            return file_name, file_type
+
+    def path_file_save_s3(self, location, file_name, prefix) -> str:
+        if file_name is None:
+            file_name = str(uuid4()) + '.{}'.format(prefix)
+        return os.path.join('{}/'.format(location), now().date().strftime("%Y/%m/%d"), file_name)
+
+    def save_file_pdf(self, content, keep_name_file=False):
+        location = "pdf"
+        max_size_file = 4194304
+        validate_type_file = ['pdf']
+
+        file_name, file_type = self.verify_file(content, validate_type_file, max_size_file, keep_name_file)
+        path_file = self.path_file_save_s3(location, file_name, file_type)
+        return self.save(path_file, content)
+
+    def save_file_image(self, content, keep_name_file=False):
+        location = "media"
+        max_size_file = 4194304
+        validate_type_file = ['png', 'jpg', 'jpeg']
+
+        file_name, file_type = self.verify_file(content, validate_type_file, max_size_file, keep_name_file)
+        path_file = self.path_file_save_s3(location, file_name, file_type)
+        return self.save(path_file, content)
+
+    def save_file_zip(self, content, keep_name_file=False):
+        location = "zip"
+        max_size_file = 4194304
+        validate_type_file = ['zip']
+
+        file_name, file_type = self.verify_file(content, validate_type_file, max_size_file, keep_name_file)
+        path_file = self.path_file_save_s3(location, file_name, file_type)
+        return self.save(path_file, content)
 
 
 # return path image

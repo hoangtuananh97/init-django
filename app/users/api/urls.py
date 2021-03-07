@@ -2,7 +2,7 @@ from django.conf.urls import url
 
 from app.users.api.views import UserRegistrationView, UserSigninView, UserActivationView, ForgotPassword, \
     UserProfileCreate, \
-    SearchUser, UserProfileUpdate, create_presigned_post
+    SearchUser, UserProfileUpdate, create_presigned_post, upload_file
 
 urlpatterns = [
     url(r'^signup$', UserRegistrationView.as_view(), name='signup'),
@@ -12,5 +12,6 @@ urlpatterns = [
     url(r'^profile/create$', UserProfileCreate.as_view(), name="user_profile_create"),
     url(r'^profile/update$', UserProfileUpdate.as_view(), name="user_profile_update"),
     url(r'^search$', SearchUser.as_view(), name="search_user"),
-    url(r'^presigned-url$', create_presigned_post, name="search_user"),
+    url(r'^presigned-url$', create_presigned_post, name="search_user122"),
+    url(r'^upload-file$', upload_file, name="search_user12"),
 ]
