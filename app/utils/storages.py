@@ -45,14 +45,12 @@ class MediaRootS3Boto3Storage(S3Boto3Storage):
         if file_size > max_size_file:
             raise ValueError('Error Max length File is {} while file upload is {}'.format(convert_size(max_size_file),
                                                                                           convert_size(file_size)))
-
+        file_name = str(uuid4()) + '.{}'.format(file_type)
         if keep_name_file:
             file_name = content.name
-            return file_name, file_type
+        return file_name
 
-    def path_file_save_s3(self, location, file_name, prefix) -> str:
-        if file_name is None:
-            file_name = str(uuid4()) + '.{}'.format(prefix)
+    def path_file_save_s3(self, location, file_name) -> str:
         return os.path.join('{}/'.format(location), now().date().strftime("%Y/%m/%d"), file_name)
 
     def save_file_pdf(self, content, keep_name_file=False):
@@ -60,8 +58,8 @@ class MediaRootS3Boto3Storage(S3Boto3Storage):
         max_size_file = 4194304
         validate_type_file = ['pdf']
 
-        file_name, file_type = self.verify_file(content, validate_type_file, max_size_file, keep_name_file)
-        path_file = self.path_file_save_s3(location, file_name, file_type)
+        file_name = self.verify_file(content, validate_type_file, max_size_file, keep_name_file)
+        path_file = self.path_file_save_s3(location, file_name)
         return self.save(path_file, content)
 
     def save_file_image(self, content, keep_name_file=False):
@@ -69,8 +67,8 @@ class MediaRootS3Boto3Storage(S3Boto3Storage):
         max_size_file = 4194304
         validate_type_file = ['png', 'jpg', 'jpeg']
 
-        file_name, file_type = self.verify_file(content, validate_type_file, max_size_file, keep_name_file)
-        path_file = self.path_file_save_s3(location, file_name, file_type)
+        file_name = self.verify_file(content, validate_type_file, max_size_file, keep_name_file)
+        path_file = self.path_file_save_s3(location, file_name)
         return self.save(path_file, content)
 
     def save_file_zip(self, content, keep_name_file=False):
@@ -78,8 +76,8 @@ class MediaRootS3Boto3Storage(S3Boto3Storage):
         max_size_file = 4194304
         validate_type_file = ['zip']
 
-        file_name, file_type = self.verify_file(content, validate_type_file, max_size_file, keep_name_file)
-        path_file = self.path_file_save_s3(location, file_name, file_type)
+        file_name = self.verify_file(content, validate_type_file, max_size_file, keep_name_file)
+        path_file = self.path_file_save_s3(location, file_name)
         return self.save(path_file, content)
 
 
