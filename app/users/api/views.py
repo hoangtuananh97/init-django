@@ -25,6 +25,7 @@ from app.users.models import User, UserProfile
 from app.utils import error_json_render, signals
 from app.utils.email import CustomActionEmail, RegisterComplete, SendMail
 from app.utils.error_json_render import ErrorFormatFile
+from app.utils.permissions import CustomPermission
 from app.utils.storages import MediaRootS3Boto3Storage
 from config.settings.local import AWS_STORAGE_BUCKET_NAME, AWS_ACCESS_KEY_ID, AWS_SECRET_ACCESS_KEY
 
@@ -172,11 +173,19 @@ class UserProfileUpdate(generics.UpdateAPIView):
 
 
 class SearchUser(generics.ListAPIView):
-    permission_classes = (AllowAny,)
-    authentication_classes = [SessionAuthentication, BasicAuthentication]
+    permission_classes = (IsAuthenticated, CustomPermission,)
+    # authentication_classes = [SessionAuthentication, BasicAuthentication]
     serializer_class = ListUserSerializer
+    permission_code = 'web.change_bill'
 
     def get_queryset(self):
+        # self.request.user.has_perm('web.change_bill')
+        # permission_code = self.request.META.get("HTTP_PERMISSION_CODE")
+        # # permissions = self.request.user.get_all_permissions()
+        #
+        # permissions = self.request.user.get_group_permissions()
+        # if permission_code in permissions:
+        #     print("hello")
         users = User.objects.select_related('user_relate_profile').all()
 
         return users

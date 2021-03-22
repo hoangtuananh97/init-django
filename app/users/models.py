@@ -67,3 +67,9 @@ class UserProfile(models.Model):
 
     class Meta:
         db_table = 'tb_user_profile'
+        permissions = [
+            ('add_userprofile_123', 'can add user profile 1234'),
+            ('edit_userprofile_123', 'can edit user profile 1234'),
+            ('view_userprofile_123', 'can view user profile 1234'),
+            ('delete_userprofile_123', 'can delete user profile 1234'),
+        ]
